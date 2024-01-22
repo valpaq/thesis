@@ -1,0 +1,140 @@
+\begin{lstlisting}[language=python]
+
+def add(a, b):
+  global additions
+  additions += 1
+  return a+b
+def mul(a, b):
+  global multiplications
+  multiplications += 1
+  return a*b
+def addTwoPointsWeierstrass(a, b, x1, y1, z1, x2, y2, z2):
+  if(x1==x2 and y1==y2):
+    w=add(mul(a,mul(z1,z1)),mul(3, mul(x1,x1)))
+    s=mul(y1,z1)
+    ss=mul(s, s)
+    sss = mul(s, ss)
+    r=mul(y1, s)
+    b=mul(x1, r)
+    b4=mul(4, b)
+    h=add(mul(w, w), -add(b4, b4))
+    x3=mul(h, s)
+    x3=add(x3,x3)
+    y3=add(mul(w, add(b4, -h)),-mul(8, mul(r,r)))
+    z3=mul(8, sss)
+  else:
+    y1z1=mul(y1,z2)
+    x1z2=mul(x1,z2)
+    z1z2=mul(z1,z2)
+    u=add(mul(y2,z1),-y1z2)
+    uu=mul(u,u)
+    v=add(mul(x2,z1),-x1z2)
+    vv=mul(v,v)
+    vvv=mul(v, vv)
+    R=mul(vv, x1z2)
+    A=add(mul(uu, z1z2),-add(vvv, add(R, R)))
+    x3=mul(v, A)
+    y3=add(mul(u, add(R, -A)), -mul(vvv, y1z2))
+    z3=mul(vvv, z1z2)
+  return x3, y3, z3
+
+def addTwoPointsEdwards(e, d, x1, y1, z1, x2, y2, z2):
+  if(x1==x2 and y1==y2 and z1 == z2):
+    B = add(x1,y1)
+    B = mul(B, B)
+    C = mul(x1, x1)
+    D = mul(y1, y1)
+    E = mul(e*C)
+    F = add(E, D)
+    H = mul(z1, z1)
+    J = add(F, -add(H, H))
+    x3 = mul(add(B, -add(C, D)), J)
+    y3 = mul(F, add(E, -D))
+    z3 = mul(F, J)
+  else:
+    A = mul(z1, z2)
+    B = mul(A, A)
+    C = mul(x1, x2)
+    D = mul(y1, y2)
+    E = mul(d, mul(C, D))
+    F = add(B, -E)
+    G = add(B, E)
+    x3 = mul(mul(A, F), add(mul(add(x1, y1), add(x2, y2)), -add(C, D)))
+    y3 = mul(mul(A, G), add(D, -mul(e, C)))
+    z3 = mul(F, G)
+  return x3, y3, z3
+
+def addTwoPointsHadano(a, b, x1, y1, z1, x2, y2, z2):
+  if(x1==x2 and y1==y2 and z1 == z2):
+    y1z1 = mul(y1, z1)
+    y12z1 = mul(y1z1, y1)
+    az1 = mul(a, z1)
+    x12 = add(x1, x1)
+    ax12z1 = mul(az1, x12)
+    z12 = mul(z1, z1)
+    bz12 = mul(b, z12)
+    delta = add(add(mul(3, mul(x1, x1)), ax12z1), bz12)
+    delta2 = mul(delta, delta)
+    y12z14 = mul(4, y12z1)
+    y13z12 = mul(y12z14, y1z1)
+    az1p2x = add(az1, x12)
+    z3 = mul(y13z12, add(z1, z1))
+    x3 = add(-mul(y12z14, az1p2x), delta2)
+    y3 = add(mul(y12z14, add(-add(y12z1, y12z1),
+                              mul(x1, delta))), -mul(x3, delta))
+    x3 = mul(x3, add(y1z1,y1z1)) 
+  else:
+    z1z2 = mul(z1, z2)
+    y2z1 = mul(y2, z1)
+    y1z2 = mul(y1, z2)
+    x2z1 = mul(x2, z1)
+    x1z2 = mul(x1, z2)
+    llambda = add(y2z1, -y1z2)
+    delta = add(x2z1, -x1z2)
+    llambda2 = mul(llambda, llambda)
+    delta2 = mul(delta, delta)
+    deltap = add(x2z1, x1z2)
+    adelta2 = mul(a, delta2)
+    x3 = add(mul(z1z2, add(llambda2, -a2delta2)), -mul(delta2, deltap))
+    z3 = mul(mul(z1z2, delta2), delta)
+    y3 = add(mul(mul(z2, delta2), add(-mul(y1, delta), 
+                        mul(llambda, x1))), -mul(llambda, x3))
+    x3 = mul(x3, delta)        
+  return x3, y3, z3
+
+def endomorphismHadano(alpha, x, y, z):
+  xx1 = add(x, K(1))
+  xx1xx1 = mul(xx1, xx1)
+  z13 = mul(K(3), z)
+  xx3 = add(x, -z13)
+  delta = mul(alpha, xx1)
+  znew = mul(mul(z13,delta), xx1xx1)
+  xnew = -mul(mul(delta, x), mul(xx3, xx3))
+  x1z13 = mul(x, z13)
+  ynew = mul(mul(xx3, add(add(mul(x, x), 
+                              add(x1z13, x1z13)), mul(z13, z))), y)
+  return xnew, ynew, znew
+
+def montgomeryAddPoints(x1, z1, x2, z2, mx1, mz1):
+  a = add(x1,-z1); 
+  b = add(x1, z1); 
+  c = add(x2,-z2); 
+  d = add(x2, z2)
+  e = mul(a,d); 
+  f = mul(b, c);
+  epf = add(e, f)
+  emf = add(e, -f)
+  x3 = mul(mz1, mul(epf, epf))
+  z3 = mul(mx1, mul(emf, emf))
+  return [x3, z3]
+
+def montgomeryDoublePoint(x, z, C):
+  a=add(x, z);
+  b=add(x, -z);
+  c=mul(a, a); 
+  d=mul(b, b); 
+  e=add(c, -d)
+  x3 = mul(c, d)
+  z3 = mul(e, add(d, mul(C, e)))
+  return [x3, z3]
+\end{lstlisting}

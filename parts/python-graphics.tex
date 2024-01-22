@@ -1,0 +1,109 @@
+\begin{lstlisting}[language=python]
+import pandas as pd
+import json
+import matplotlib.pyplot as plt
+import random
+import seaborn as sns
+
+results = []
+
+for i in range(2, 75):
+    j = round(log(10**i, 2)*1.5) 
+    numbers = [random.randint(10**i, 10**(i+1) - 1) for _ in range(j)]
+    for number in numbers:
+        additions = 0
+        multiplications = 0
+
+        multiplyPointStandardVersion(xWeier, yWeier, zWeier, number, aWeier, bWeier, addTwoPointsWeierstrass)
+        
+        weierAdditions = additions
+        weierMultiplications = multiplications
+        
+        additions = 0
+        multiplications = 0
+
+        montgomeryLadder(xMont, zMont, number, muMont) 
+        
+        montAdditions = additions
+        montMultiplications = multiplications
+        
+        additions = 0
+        multiplications = 0
+
+        multiplyPointStandardVersion(xHadano, yHadano, zHadano, number, aHadano, bHadano, addTwoPointsHadano)
+        
+        hadanoAdditions = additions
+        hadanoMultiplications = multiplications
+        
+        additions = 0
+        multiplications = 0
+
+        multiplyPointStandardVersion(xEdwards, yEdwards, zEdwards, number, eEdwards, dEdwards, addTwoPointsEdwards)
+        
+        edwardsAdditions = additions
+        edwardsMultiplications = multiplications
+                
+        additions = 0
+        multiplications = 0
+
+        multiplyPointEndoVersion(xHadano, yHadano, zHadano, number, aHadano, bHadano, addTwoPointsHadano, endomorphismHadano, sqrt(-3), p)
+        endoAddition = additions
+        endoMultiplications = multiplications
+
+        results.append({'number': str(number), "endoMultiplications": str(endoMultiplications), "endoAdditions": str(endoAddition),
+                        "weierAdditions": str(weierAdditions), "weierMultiplications": str(weierMultiplications), 
+                        "montAdditions": str(montAdditions), "montMultiplications": str(montMultiplications),
+                        "hadanoAdditions": str(hadanoAdditions), "hadanoMultiplications": str(hadanoMultiplications),
+                        "edwardsAdditions": str(edwardsAdditions), "edwardsMultiplications": str(edwardsMultiplications)})        
+
+
+
+with open('resultsWithEndo.json', 'w') as f:
+    json.dump(results, f)
+df = pd.DataFrame.from_dict(json.load(open("resultsWithEndo.json")))
+for col in df.columns:
+  df[col] = df[col].astype(float)
+
+plt.figure(figsize=(10, 6))
+sns.lineplot(x=df['k'], y=df['hadanoAdditions'], label='hadano', color='brown')
+sns.lineplot(x=df['k'], y=df['weierAdditions'], label='weierstrass', color='orange')
+sns.lineplot(x=df['k'], y=df['edwardsAdditions'], label='edwards', color='r')
+sns.lineplot(x=df['k'], y=df['endoAdditions'], label='endomorphism', color='g')
+sns.lineplot(x=df['k'], y=df['montAdditions'], label='montgomery', color='y')
+plt.xscale('log')
+plt.show()
+
+plt.figure(figsize=(10, 6))
+
+sns.lineplot(x=df['k'], y=df['edwardsMultiplications'], label='edwards', color='r')
+sns.lineplot(x=df['k'], y=df['hadanoMultiplications'], label='hadano', color='brown')
+sns.lineplot(x=df['k'], y=df['montMultiplications'], label='montgomery', color='y')
+sns.lineplot(x=df['k'], y=df['weierMultiplications'], label='weierstrass', color='orange')
+sns.lineplot(x=df['k'], y=df['endoMultiplications'], label='endomorphism', color='g')
+plt.xscale('log')
+plt.show()
+
+intervals = [(10 ** i, 10 ** (i + 1)) for i in range(2, 76)]
+
+result_df = pd.DataFrame(columns=['interval', 'averageEdwardsTime', 'averageHadanoTime', 'averageMontTime', 'averageWeierTime', 'averageEndoTime'])
+
+for interval in intervals:
+  lower_bound, upper_bound = interval
+  interval_data = df[(df['k'] >= lower_bound) & (df['k'] < upper_bound)]
+  average_value_edwards = interval_data['edwardsTime'].mean()
+  average_value_hadano = interval_data['hadanoTime'].mean()
+  average_value_mont = interval_data['montTime'].mean()
+  average_value_weier = interval_data['weierTime'].mean()
+  average_value_endo = interval_data['endoTime'].mean()
+  result_df = result_df.append({'interval': upper_bound, 'averageEdwardsTime': average_value_edwards, 'averageHadanoTime': average_value_hadano, 'averageMontTime': average_value_mont, 'averageWeierTime': average_value_weier, 'averageEndoTime': average_value_endo}, ignore_index=True)
+  
+plt.figure(figsize=(10, 6))
+
+sns.lineplot(x=result_df['interval'], y=result_df['averageEdwardsTime'], label='edwards', color='r')
+sns.lineplot(x=result_df['interval'], y=result_df['averageHadanoTime'], label='hadano', color='brown')
+sns.lineplot(x=result_df['interval'], y=result_df['averageMontTime'], label='montgomery', color='y')
+sns.lineplot(x=result_df['interval'], y=result_df['averageWeierTime'], label='weierstrass', color='orange')
+sns.lineplot(x=result_df['interval'], y=result_df['averageEndoTime'], label='endomorphism', color='g')
+plt.xscale('log')
+plt.show()
+\end{lstlisting}

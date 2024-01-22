@@ -1,0 +1,73 @@
+\begin{lstlisting}[language=python]
+
+def tr(a):
+    return (a + conjugate(a)).real().n(digits=1024)
+
+def nA(a):
+    return (conjugate(a) * a).real().n(digits=1024)
+
+def calculateW(a, k):
+    na = nA(a)
+    trA = tr(a)
+    sigmaA = na % 2
+    nAa = (na - sigmaA) // 2
+    s0 = k
+    s1 = 0
+    wArray = [0] * (round(2 * log(k) / log(na)) + 5)
+    w = 0
+
+    while True:
+    q = s0 // na
+    xW = s0 % na
+    if xW > nAa:
+        xW = xW - na
+        q += 1
+    wArray[w] = round(xW.real())
+    s0 = round((q * trA + s1).real())
+    s1 = -q
+    w += 1
+    if abs(s0) < nAa and s1 == 0:
+        break
+
+    return wArray
+
+
+def multiplyPointStandardVersion(Px, Py, Pz, k, a, b, func):
+    binary = Integer(k).digits(base=2)[::-1]
+    resx, resy, resz = 0, 1, 0
+    px, py, pz = Px, Py, Pz
+
+    for digit in binary:
+    if digit == 1:
+        resx, resy, resz = func(resx, resy, resz, px, py, pz, a, b)
+    px, py, pz = func(px, py, pz, px, py, pz, a, b)
+
+    return resx, resy, resz
+
+
+def multiplyPointEndoVersion(Px, Py, Pz, k, a, b, func1, func2, AComplex, p):
+    binary = calculateW(AComplex, k)
+    resx, resy, resz = 0, 1, 0
+    px, py, pz = Px, Py, Pz
+
+    for digit in binary:
+    if digit == 1:
+        resx, resy, resz = func1(resx, resy, resz, px, py, pz, a, b)
+    if digit == -1:
+        tmpy = add(p, -py)
+        resx, resy, resz = func1(resx, resy, resz, px, tmpy, pz, a, b)
+    px, py, pz = func2(px, py, pz, a, b)
+
+    return resx, resy, resz
+
+def montgomeryLadder(x, z, n, mu):
+    Q = [[x, z], mdbl(x, z, C)]
+    b = n.digits(2)
+    C = (mu + 2) / 4
+    for i in range(len(b)-2,-1,-1):
+        Q[1-b[i]] = montgomeryAddPoints(Q[1][0], Q[1][1], Q[0][0]. Q[0][1], x, z)
+        Q[b[i]] = montgomeryDoublePoint(Q[b[i]][0], Q[b[i]][1],C)
+    return Q[0][0], Q[0][1]
+
+
+\end{lstlisting}

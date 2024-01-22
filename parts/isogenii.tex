@@ -1,0 +1,72 @@
+\begin{lstlisting}[language=python]
+
+def convertWeierstrassToHadanoCoeffs(a, b, gamma):
+    R.<x> = PolynomialRing(K, 'x')
+    equation = x^3 + a*x + b
+    roots = equation.roots(multiplicities=False)
+    theta = roots[0]
+    newA = 3*theta*gamma
+    newB = (3*theta^2 + a) * gamma^2
+    return newA, newB
+
+def convertWeierstrassToHadanoPoints(a, b, gamma, xWeier, yWeier):
+    R.<x> = PolynomialRing(K, 'x')
+    equation = x^3 + a*x + b
+    roots = equation.roots(multiplicities=False)
+    theta = roots[0]
+    xHadano = gamma * (xWeier-theta)
+    yHadano = (gamma.sqrt() ** 3) * yWeier
+    return xHadano, yHadano
+
+def convertMontgomeryToEdwardsCoeffs(gamma, mu):
+    e = (mu + 2)/gamma
+    d = (mu - 2)/gamma
+    return e, d
+
+def convertMontgomeryToEdwardsPoints(gamma, mu, x, y):
+    xEdwards = x/y
+    yEdwards = (x-1)/(x+1)
+    return xEdwards, yEdwards
+
+def convertEdwardsToMontgomeryCoeffs(e, d):
+    mu = 2 * (e + d) / (e - d)
+    gamma = 4 / (e - d)
+    return gamma, mu
+
+def convertEdwardsToMontgomeryPoints(e, d, x, y):
+    xMont = (1 + y) / (1 - y)
+    yMont = xMont/x
+    return xMont, yMont
+
+def convertWeierStrassToMontgomeryCoeffs(a, b):
+    R.<x> = PolynomialRing(K, 'x')
+    equation = x^3 + a*x + b
+    roots = equation.roots(multiplicities=False)
+    theta = roots[0]
+    gamma = sqrt(3*theta^2+a)
+    mu=3*theta/gamma
+    return gamma, mu
+
+def convertWeierStrassToMontgomeryPoints(a, b, x, y):
+    R.<x> = PolynomialRing(K, 'x')
+    equation = x^3 + a*x + b
+    roots = equation.roots(multiplicities=False)
+    theta = roots[0]
+    gamma = sqrt(3*theta^2+a)
+    xMont = (xWeier-theta)/gamma
+    yMont = yWeier / gamma^2
+    return xMont, yMont
+
+def convertMontgomeryToWeierstrassCoeffs(gamma, mu):
+    theta = gamma * mu / 3
+    a = gamma^2 - 3*theta^2
+    b = -(theta^3 + a*theta)
+    return a, b
+
+def convertMontgomeryToWeierstrassPoints(gamma, mu, x, y):
+    theta = gamma * mu / 3
+    xWeier = gamma * x + theta
+    yWeier = gamma^2 * y
+    return xWeier, yWeier
+
+\end{lstlisting}

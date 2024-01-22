@@ -1,0 +1,94 @@
+\begin{lstlisting}[language=python]
+
+def ecIsSafePrime(p, endo, gamma):
+    if not is_prime(p):
+        return False
+    if kronecker_symbol(endo, p) != 1:
+        return False
+    if kronecker_symbol(gamma, p) != 1:
+        return False
+    return True
+
+def ecCreateBasePoint(a, b, p):
+    K = GF(p)
+    ec = EllipticCurve([K(a), K(b)])
+    for x in range(1, 1010):
+        y = K(x**3 + a*x + b)
+        if kronecker_symbol(y, p) == 1:
+            try:
+                P = ec.lift_x(K(x), all=False)
+                return P
+            except: 
+                pass
+    return False
+
+def norm_equation(D, p):
+    assert D < 0 and D\%4 in (0,1) and is_pseudoprime(p)
+    if -D >= 4*p: return ()
+    if p==2: return (ZZ(sqrt(D+8)),1) if is_square(D+8) else ()
+    if kronecker(D,p) == -1: return ()
+    F=GF(p,proof=false)
+    x0=F(D).sqrt().lift()
+    assert not (x0^2 - D) \% p 
+    if (x0-D)\%2: x0 = p - x0
+    a,t,m = 2*p, x0, integer_floor(2*sqrt(p))
+    while t > m: a,t=t,a\%t
+    if (4*p-t^2) \% (-D): return ()
+    c = (4*p-t^2)//(-D)
+    if not is_square(c): return ()
+    v=sqrt(c)
+    assert 4*p == t^2-v^2*D
+    return (t,v)
+
+results = []
+endo = -3
+gamma = 2
+aClear = -15/4
+bClear = -11/4
+p=2**255 
+while True:
+    p=p.next_prime()
+    if not ecIsSafePrime(p, endo, gamma):
+        continue
+    K = GF(p)
+    a = K(aClear)
+    b = K(bClear)
+    ec = EllipticCurve([a, b])
+    try:
+    resultNormEquation = norm_equation(endo, p)
+    if len(resultNormEquation) != 2:
+        continue
+    m_delta = p + 1 + abs(resultNormEquation[0])
+    m__delta = p + 1 - abs(resultNormEquation[1])
+    if m_delta %4 == 0 :
+        m_delta_factored = factor(m_delta)
+    else:
+        m_delta_factored = []
+    if m__delta %4 == 0 :
+        m__delta_factored = factor(m__delta)
+    else:
+        m__delta_factored = []
+    if len(m_delta_factored) == 2:
+        pass
+    elif len(m__delta_factored) == 2:
+        pass
+    else:
+        continue
+    point = ecCreateBasePoint(a, b, p)
+    if(point):
+        results.append({
+        "point.x": point[0],
+        "point.y": point[1],
+        "point.z": point[2],
+        "a": a,
+        "b": b,
+        "p": p,
+        "m_delta": m_delta,
+        "m__delta": m__delta
+        })
+    if len(results) > 0:
+        break
+    except e:
+        pass
+
+\end{lstlisting}

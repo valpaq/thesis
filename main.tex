@@ -1,0 +1,36 @@
+\documentclass[14pt]{HSEUniversity}
+\usepackage{graphicx}
+\addbibresource{parts/refs.bib}
+\begin{thesis}[
+    title = Построение эллиптических кривых с комплексным умножением для криптографических приложений,
+    year = 2024,
+    %
+    authorGroup = СКБ182,
+    authorName = В. А. Парамонов,
+    %
+    academicTeacherTitle = {Доцент кафедры Компьютерной безопасности НИУ ВШЭ МИЭМ},
+    academicTeacherName = А.Ю. Нестеренко.,
+    %
+    keywordsRu = эллиптическая кривая; вычисление кратной точки; эндоморфизм; комплексное умножение,
+    keywordsEn = elliptic curve; point multiplication; endomorphism; complex multiplication;
+]
+
+\setAbstractResource{parts/abstract-ru}{parts/abstract-en}
+\setTerminologyResource{parts/terminology}
+\setIntroResource{parts/intro}
+\addChapter{Сравниваемые формы эллиптических кривых}{parts/forms-and-connections}
+\addChapter{Эндоморфизм эллиптической кривой}{parts/endomorphism}
+\addChapter{Алгоритмы возведения в кратную точку}{parts/multiple-point-info}
+\addChapter{Построение эллиптической кривой и экспериментальные вычисления}{parts/analysis}
+\setConclusionResource{parts/conclusion}
+
+\addAppendix{Построение эллиптической кривой}{parts/constructing-elliptic}
+\addAppendix{Формулы сложения и удвоения точек в разных формах}{parts/formulas-for-points-addition}
+\addAppendix{Формулы сложения и удвоения точек в разных формах}{parts/formulas-for-points-addition}
+\addAppendix{Изогении между формами кривых}{parts/isogenii}
+\addAppendix{Алгоритмы вычисления кратной точки}{parts/multiple-point}
+\addAppendix{Построение граффиков}{parts/python-graphics}
+
+
+
+\end{thesis}
